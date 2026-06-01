@@ -2,7 +2,7 @@ import { connectDB } from "@/lib/db";
 import { Resource } from "@/models/Resource";
 import { NextResponse } from "next/server";
 
-//subjects for drop down while uploading
+//subjects for drop down while uploading a resource
 export async function GET(
   request: Request
 ) {

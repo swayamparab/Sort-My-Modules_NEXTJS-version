@@ -4,6 +4,7 @@ import { imagekit } from "@/lib/imagekit";
 import { Resource } from "@/models/Resource";
 import { NextResponse } from "next/server";
 
+//upload new resource
 export async function POST(request: Request) {
     try {
         await connectDB();

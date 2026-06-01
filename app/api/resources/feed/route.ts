@@ -5,6 +5,7 @@ import { User } from "@/models/User";
 import { Vote } from "@/models/Vote";
 import { NextResponse } from "next/server";
 
+//fetch top resources related to user
 export async function GET() {
     try {
         await connectDB();

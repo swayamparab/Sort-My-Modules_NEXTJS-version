@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
 
+//signup new user
 export async function POST(request: Request) {
   try {
     await connectDB();

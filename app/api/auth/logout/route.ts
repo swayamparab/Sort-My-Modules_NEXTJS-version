@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+//logout user
 export async function POST(request: Request) {
 
     try {

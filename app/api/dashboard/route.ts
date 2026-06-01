@@ -4,6 +4,7 @@ import { Resource } from "@/models/Resource";
 import { User } from "@/models/User";
 import { NextResponse } from "next/server";
 
+//fetch user dashboard
 export async function GET() {
     try {
         await connectDB();

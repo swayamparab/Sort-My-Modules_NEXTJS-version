@@ -3,6 +3,7 @@ import { getUserFromToken } from "@/lib/getUserFromToken";
 import { User } from "@/models/User";
 import { NextResponse } from "next/server";
 
+//get current logged in user
 export async function GET(){
     try{
         await connectDB();
