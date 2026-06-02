@@ -39,9 +39,11 @@ body.dark {
   font-family: "Inter", sans-serif;
 }
 
+html,
 body {
-  background-color: var(--bg);
-  color: var(--text);
+  min-height: 100%;
+  background-color: var(--bg, #0f172a);
+  color: var(--text, white);
   transition: background 0.3s ease, color 0.3s ease;
 }
 
@@ -201,7 +203,7 @@ select.input {
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.3);
+  background: rgba(0, 0, 0, 0.3);
   z-index: 200;
 }
 
@@ -219,7 +221,7 @@ select.input {
   padding: 0.8rem;
   width: 160px;
   z-index: 400;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
 .dropdown button {
