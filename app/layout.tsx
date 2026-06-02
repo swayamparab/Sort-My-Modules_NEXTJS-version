@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { Toaster } from "react-hot-toast";
+import NextTopLoader from "nextjs-toploader";
 
 export default function RootLayout({
   children,
@@ -24,6 +25,12 @@ export default function RootLayout({
                   borderRadius: "8px"
                 }
               }}
+            />
+            <NextTopLoader
+              color="#3b82f6"
+              height={3}
+              showSpinner={false}
+              speed={250}
             />
             <Navbar />
             <main className="container">
