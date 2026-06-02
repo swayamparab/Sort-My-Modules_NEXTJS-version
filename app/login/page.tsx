@@ -212,7 +212,7 @@ export default function LoginPage() {
       >
         Don't have an account?{" "}
         <Link
-          href="/register"
+          href="/signup"
           style={{
             color: "#4F46E5",
             fontWeight: "500",

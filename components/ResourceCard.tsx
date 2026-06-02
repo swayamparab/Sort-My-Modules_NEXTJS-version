@@ -22,27 +22,29 @@ type Resource = {
 
 type ResourceCardProps = {
   resource: Resource;
-  rank: number;
 };
 
 export default function ResourceCard({
   resource,
-  rank,
 }: ResourceCardProps) {
+
   const router = useRouter();
 
-  const [isVoted, setIsVoted] = useState(resource.isVoted);
+  const [isVoted, setIsVoted] =
+    useState(resource.isVoted);
 
-  const [isBookmarked, setIsBookmarked] = useState(
-    resource.isBookmarked
-  );
+  const [isBookmarked, setIsBookmarked] =
+    useState(resource.isBookmarked);
 
-  const [votes, setVotes] = useState(resource.votes);
+  const [votes, setVotes] =
+    useState(resource.votes);
 
   const handleVote = async () => {
+
     try {
-      const res = await api.post(
-        `/resource/vote/${resource._id}`
+
+      const res = await api.patch(
+        `/resources/${resource._id}/vote`
       );
 
       setIsVoted(res.data.isVoted);
@@ -50,54 +52,70 @@ export default function ResourceCard({
       setVotes(res.data.votes);
 
       if (res.data.isVoted) {
+
         toast.success("Upvoted 👍");
+
       } else {
+
         toast("Vote removed");
+
       }
+
     } catch (err) {
+
       toast.error("Vote failed");
+
     }
   };
 
   const handleBookmark = async () => {
+
     try {
-      const res = await api.post(
-        `/resource/bookmark/${resource._id}`
+
+      const res = await api.patch(
+        `/resources/${resource._id}/bookmark`
       );
 
-      setIsBookmarked(res.data.isBookmarked);
+      setIsBookmarked(
+        res.data.isBookmarked
+      );
 
       if (res.data.isBookmarked) {
-        toast.success("Saved to bookmarks");
+
+        toast.success(
+          "Saved to bookmarks"
+        );
+
       } else {
-        toast("Removed from bookmarks");
+
+        toast(
+          "Removed from bookmarks"
+        );
+
       }
+
     } catch (err) {
+
       toast.error("Bookmark failed");
+
     }
   };
 
   const handleView = () => {
-    router.push(`/resource/${resource._id}`);
+
+    router.push(
+      `/resource/${resource._id}`
+    );
+
   };
 
   return (
     <div className="card resource-card">
-      {/* RANK BADGE */}
-      <div
-        style={{
-          fontWeight: "bold",
-          marginBottom: "6px",
-        }}
-      >
-        {rank === 1 && "🥇 Top Resource"}
-        {rank === 2 && "🥈 Popular"}
-        {rank === 3 && "🥉 Trending"}
-        {rank > 3 && `#${rank}`}
-      </div>
 
       {/* BADGES */}
+
       <div className="badge-container">
+
         <span className="badge badge-primary">
           {resource.subject}
         </span>
@@ -109,9 +127,11 @@ export default function ResourceCard({
         <span className="badge">
           Sem {resource.semester}
         </span>
+
       </div>
 
       {/* TITLE */}
+
       <h3
         style={{
           fontWeight: "600",
@@ -121,6 +141,7 @@ export default function ResourceCard({
       </h3>
 
       {/* FACULTY */}
+
       <p
         style={{
           fontSize: "0.9rem",
@@ -131,8 +152,11 @@ export default function ResourceCard({
       </p>
 
       {/* FOOTER */}
+
       <div className="card-footer">
+
         <div className="card-stats">
+
           <span
             onClick={handleVote}
             style={{
@@ -158,6 +182,7 @@ export default function ResourceCard({
               ? "📑saved"
               : "🔖save"}
           </span>
+
         </div>
 
         <button
@@ -166,7 +191,9 @@ export default function ResourceCard({
         >
           View
         </button>
+
       </div>
+
     </div>
   );
 }

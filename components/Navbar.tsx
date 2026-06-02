@@ -91,10 +91,7 @@ export default function Navbar() {
                         <>
                             <Image
                                 src={logo}
-                                alt="Logo"
-                                width={150}
-                                height={50}
-                                priority
+                                alt=""
                                 style={{
                                     width: "150px",
                                     height: "auto",

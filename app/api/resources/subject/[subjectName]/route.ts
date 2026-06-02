@@ -5,91 +5,159 @@ import { User } from "@/models/User";
 import { Vote } from "@/models/Vote";
 import { NextResponse } from "next/server";
 
-//get resources of subjects related to user's branch and semester only
-export async function GET(request: Request, { params }: { params: Promise<{ subjectName: string; }>; }) {
+// get resources of subjects related to user's branch and semester only
+export async function GET(
+    request: Request,
+    {
+        params,
+    }: {
+        params: Promise<{
+            subjectName: string;
+        }>;
+    }
+) {
+
     try {
+
         await connectDB();
 
-        const userId = await getUserFromToken();
+        const userId =
+            await getUserFromToken();
 
         if (!userId) {
+
             return NextResponse.json(
                 {
-                    message: "Unauthorized",
+                    message:
+                        "Unauthorized",
                 },
-                { status: 401 }
+                {
+                    status: 401,
+                }
             );
         }
 
-        const user = await User.findById(userId)
-            .select(
-                "branch semester"
+        const user =
+            await User.findById(
+                userId
+            ).select(
+                "branch semester bookmarks"
             );
 
         if (!user) {
+
             return NextResponse.json(
                 {
                     message:
                         "User not found",
                 },
-                { status: 404 }
+                {
+                    status: 404,
+                }
             );
         }
 
-        const { subjectName } = await params;
+        const { subjectName } =
+            await params;
 
-        const subjectKey = subjectName
-            .toLowerCase()
-            .replace(/\s+/g, "");
+        const decodedSubject =
+            decodeURIComponent(
+                subjectName
+            );
 
-        const resources = await Resource.find({
-            subjectKey,
-            branch: user.branch,
-            semester: user.semester,
-        })
-            .populate(
-                "uploadedBy",
-                "name"
-            )
-            .sort({
-                votes: -1,
-                views: -1,
-            });
+        const subjectKey =
+            decodedSubject
+                .toLowerCase()
+                .replace(/\s+/g, "");
+
+        /* FETCH RESOURCES */
+
+        const resources =
+            await Resource.find({
+                subjectKey,
+
+                branch:
+                    user.branch,
+
+                semester:
+                    user.semester,
+            })
+                .populate(
+                    "uploadedBy",
+                    "name"
+                )
+                .sort({
+                    votes: -1,
+                    views: -1,
+                });
 
         /* USER VOTES */
-        const userVotes = await Vote.find({
-            user: userId,
-        });
 
-        const votedResourceIds = new Set(
-            userVotes.map((v) =>
-                v.resource.toString()
-            )
-        );
+        const userVotes =
+            await Vote.find({
+                user: userId,
+            });
+
+        const votedResourceIds =
+            new Set(
+                userVotes.map((v) =>
+                    v.resource.toString()
+                )
+            );
+
+        /* USER BOOKMARKS */
+
+        const bookmarkedIds =
+            new Set(
+                user.bookmarks.map(
+                    (id: any) =>
+                        id.toString()
+                )
+            );
 
         /* ATTACH FLAGS */
-        const finalResources = resources.map((resource) => ({
-            ...resource.toObject(),
 
-            isVoted:
-                votedResourceIds.has(
-                    resource._id.toString()
-                ),
-        }));
+        const finalResources =
+            resources.map(
+                (resource) => ({
+
+                    ...resource.toObject(),
+
+                    isVoted:
+                        votedResourceIds.has(
+                            resource._id.toString()
+                        ),
+
+                    isBookmarked:
+                        bookmarkedIds.has(
+                            resource._id.toString()
+                        ),
+                })
+            );
 
         return NextResponse.json(
             {
-                message: "Resources by subject fetched",
-                resources: finalResources,
+                message:
+                    "Resources by subject fetched",
+
+                resources:
+                    finalResources,
             },
-            { status: 200 }
+            {
+                status: 200,
+            }
         );
+
     } catch (err: any) {
+
         return NextResponse.json(
             {
-                message: err.message,
+                message:
+                    err.message,
             },
-            { status: 500 }
+            {
+                status: 500,
+            }
         );
     }
 }

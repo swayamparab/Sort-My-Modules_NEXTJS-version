@@ -23,7 +23,7 @@ type Subject = {
   topResources: Resource[];
 };
 
-export default function DashboardPage() {
+export default function HomePage() {
   const [subjects, setSubjects] =
     useState<Subject[]>([]);
 

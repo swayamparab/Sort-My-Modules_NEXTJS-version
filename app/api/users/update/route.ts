@@ -3,7 +3,7 @@ import { getUserFromToken } from "@/lib/getUserFromToken";
 import { User } from "@/models/User";
 import { NextRequest, NextResponse } from "next/server";
 
-//update user info
+//update user info in dashboard
 export async function PATCH(request: Request) {
     try {
         await connectDB();

@@ -45,7 +45,7 @@ export default function SubjectSection({
         <h2>{subjectData.subject}</h2>
 
         <Link
-          href={`/subject/${subjectData.subject}`}
+          href={`/subject/${encodeURIComponent(subjectData.subject)}`}
           style={{
             fontSize: "13px",
             fontWeight: "600",
@@ -77,7 +77,6 @@ export default function SubjectSection({
           <ResourceCard
             key={res._id}
             resource={res}
-            rank={index + 1}
           />
         )
       )}

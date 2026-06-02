@@ -111,7 +111,7 @@ export default function SignupPage() {
     } catch (err: any) {
       setError(
         err.response?.data?.message ||
-          "Signup failed"
+        "Signup failed"
       );
     } finally {
       setLoading(false);
@@ -171,6 +171,15 @@ export default function SignupPage() {
             onChange={handleChange}
           />
 
+          <p
+            style={{
+              fontSize: "0.8rem",
+              opacity: 0.7,
+            }}
+          >
+            Use your college email
+            (@student.sfit.ac.in)
+          </p>
           <input
             className="input"
             name="email"
@@ -185,10 +194,9 @@ export default function SignupPage() {
               opacity: 0.7,
             }}
           >
-            Use your college email
-            (@student.sfit.ac.in)
+            Password must be at least
+            6 characters
           </p>
-
           <div
             style={{
               position: "relative",
@@ -216,7 +224,7 @@ export default function SignupPage() {
               style={{
                 position: "absolute",
                 right: "12px",
-                top: "50%",
+                top: "35%",
                 transform:
                   "translateY(-50%)",
                 cursor: "pointer",
@@ -229,16 +237,6 @@ export default function SignupPage() {
                 : "Show"}
             </span>
           </div>
-
-          <p
-            style={{
-              fontSize: "0.8rem",
-              opacity: 0.7,
-            }}
-          >
-            Password must be at least
-            6 characters
-          </p>
 
           <select
             className="input"

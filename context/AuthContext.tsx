@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const fetchUser = async () => {
         try {
-            const res = await api.get("/auth/me");
+            const res = await api.get("/users/getMe");
 
             setUser(res.data.user);
         } catch (err) {
