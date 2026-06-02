@@ -30,7 +30,9 @@ export default function RootLayout({
               color="#3b82f6"
               height={3}
               showSpinner={false}
-              speed={250}
+              speed={800}
+              crawl={true}
+              crawlSpeed={120}
             />
             <Navbar />
             <main className="container">
