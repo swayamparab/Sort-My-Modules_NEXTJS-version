@@ -19,9 +19,13 @@ export default function HomePage() {
         }
     }, [user, loading, router]);
 
-    return (
-        <div className="flex items-center justify-center min-h-screen bg-black">
-            <div className="w-14 h-14 border-4 border-gray-700 border-t-blue-500 rounded-full animate-spin"></div>
-        </div>
-    );
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-black">
+                <div className="w-14 h-14 border-4 border-gray-700 border-t-blue-500 rounded-full animate-spin"></div>
+            </div>
+        );
+    }
+
+    return null;
 }
