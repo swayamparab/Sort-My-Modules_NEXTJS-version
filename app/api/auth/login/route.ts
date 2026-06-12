@@ -3,31 +3,55 @@ import { User } from "@/models/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
+import { loginRateLimit } from "@/lib/ratelimiting";
 
 //login user
 export async function POST(request: Request) {
     try {
 
-        await connectDB();
 
         const body = await request.json();
         const { email, password, rememberMe } = body;
 
-        const normalizedEmail = email.toLowerCase();
-
-        /* Basic validation */
-        if (!normalizedEmail || !password) {
+        if (!email || !password) {
             return NextResponse.json({
                 message: "Email and password are required",
             }, { status: 400 });
         }
 
-        /* Restrict to college domain */
+        const normalizedEmail = email.toLowerCase();
+
         if (!normalizedEmail.endsWith("@student.sfit.ac.in")) {
             return NextResponse.json({
                 message: "Use your college email (@student.sfit.ac.in)",
             }, { status: 400 });
         }
+
+        //get IP
+        const ip = request.headers
+            .get("x-forwarded-for")
+            ?.split(",")[0]
+            .trim() ?? "unknown";
+
+        // Rate limiting
+        const ipLimit = await loginRateLimit.limit(
+            `smm:login:${ip}`
+        );
+
+        const emailLimit = await loginRateLimit.limit(
+            `smm:login-email:${normalizedEmail}`
+        );
+
+        if (!ipLimit.success || !emailLimit.success) {
+            return NextResponse.json(
+                {
+                    message: "Too many login attempts. Please try again later.",
+                },
+                { status: 429 }
+            );
+        }
+
+        await connectDB();
 
         /* Check if user exists */
         const user = await User.findOne({ email: normalizedEmail });
@@ -57,7 +81,7 @@ export async function POST(request: Request) {
         const token = jwt.sign(
             { id: user._id },
             process.env.JWT_SECRET!,
-            { expiresIn: rememberMe ? "30d" : "1d" }
+            { expiresIn: rememberMe ? "7d" : "1d" }
         );
 
         /* Response */
@@ -85,15 +109,15 @@ export async function POST(request: Request) {
                     : "lax",
             maxAge: rememberMe
                 ? 7 * 24 * 60 * 60
-                : undefined,
+                : 24 * 60 * 60,
             path: "/",
         });
 
         return response;
 
     } catch (err: any) {
-        NextResponse.json({
+        return NextResponse.json({
             message: err.message,
-        });
+        }, { status: 500 });
     }
 };
