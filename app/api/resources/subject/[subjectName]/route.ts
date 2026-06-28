@@ -6,6 +6,7 @@ import { Vote } from "@/models/Vote";
 import { NextResponse } from "next/server";
 
 // get resources of subjects related to user's branch and semester only
+//replaced with getSubjectResources service
 export async function GET(
     request: Request,
     {

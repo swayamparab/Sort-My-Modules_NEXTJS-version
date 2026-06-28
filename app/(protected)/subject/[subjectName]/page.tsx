@@ -1,67 +1,21 @@
-"use client";
-
-import { useEffect, useState } from "react";
-
-import { useParams } from "next/navigation";
-
-import api from "@/lib/axios";
-
 import ResourceCard from "@/components/ResourceCard";
+import { getUserFromToken } from "@/lib/getUserFromToken";
+import { getSubjectResources } from "@/services/subject";
+import { redirect } from "next/navigation";
 
-type Resource = {
-    _id: string;
-    title: string;
-    subject: string;
-    branch: string;
-    semester: string;
-    faculty: string;
-    votes: number;
-    isVoted: boolean;
-    isBookmarked: boolean;
-};
 
-export default function SubjectPage() {
+export default async function SubjectPage(
+    { params }: { params: Promise<{ subjectName: string }> }
+) {
+    const {subjectName} = await params;
 
-    const params = useParams();
+    const userId = await getUserFromToken();
 
-    const subjectName =
-        params.subjectName as string;
+    if (!userId) {
+        redirect("/login");
+    }
 
-    const [resources, setResources] =
-        useState<Resource[]>([]);
-
-    const [loading, setLoading] =
-        useState(true);
-
-    useEffect(() => {
-
-        const fetchResources =
-            async () => {
-
-                try {
-
-                    const res = await api.get(
-                        `/resources/subject/${encodeURIComponent(subjectName)}`
-                    );
-
-                    setResources(
-                        res.data.resources
-                    );
-
-                } catch (err) {
-
-                    console.log(err);
-
-                } finally {
-
-                    setLoading(false);
-
-                }
-            };
-
-        fetchResources();
-
-    }, [subjectName]);
+    const resources = await getSubjectResources(userId, subjectName);
 
     return (
         <>
@@ -74,12 +28,7 @@ export default function SubjectPage() {
                 {decodeURIComponent(subjectName)} Resources
             </h1>
 
-            {loading && (
-                <p>Loading...</p>
-            )}
-
-            {!loading &&
-                resources.length === 0 && (
+            {resources.length === 0 && (
                     <p>
                         No resources available
                     </p>
