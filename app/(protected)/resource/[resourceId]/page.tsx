@@ -29,7 +29,7 @@ type Resource = {
     title: string;
     subject: string;
     branch: string;
-    semester: number;
+    semester: string;
     pdfUrl: string;
     views: number;
     votes: number;
