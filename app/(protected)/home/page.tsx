@@ -1,61 +1,22 @@
-"use client";
-
-import { useEffect, useState } from "react";
-
-import api from "@/lib/axios";
-
 import SubjectSection from "@/components/SubjectSection";
+import { getUserFromToken } from "@/lib/getUserFromToken";
+import { redirect } from "next/navigation";
+import { getHomePage } from "@/services/home";
 
-type Resource = {
-  _id: string;
-  title: string;
-  subject: string;
-  branch: string;
-  semester: number;
-  faculty: string;
-  votes: number;
-  isVoted: boolean;
-  isBookmarked: boolean;
-};
+export default async function HomePage() {
+  
+  const userId = await getUserFromToken();
 
-type Subject = {
-  subject: string;
-  topResources: Resource[];
-};
+  if(!userId){
+    redirect("/login");
+  }
 
-export default function HomePage() {
-  const [subjects, setSubjects] =
-    useState<Subject[]>([]);
-
-  const [loading, setLoading] =
-    useState(true);
-
-  useEffect(() => {
-    const fetchHome = async () => {
-      try {
-        const res = await api.get(
-          "/home"
-        );
-
-        setSubjects(res.data);
-      } catch (err) {
-        console.log(
-          "error in home page"
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchHome();
-  }, []);
+  const subjects = await getHomePage(userId);
 
   return (
     <>
-      {loading && <p>Loading...</p>}
 
-      {!loading &&
-        subjects.length === 0 && (
+      {subjects.length === 0 && (
           <p>
             No resources available yet.
           </p>

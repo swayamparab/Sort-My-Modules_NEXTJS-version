@@ -6,6 +6,7 @@ import { Vote } from "@/models/Vote";
 import { NextResponse } from "next/server";
 
 //fetch home page for user
+//replaced by getHomePage service
 export async function GET() {
   try {
     await connectDB();

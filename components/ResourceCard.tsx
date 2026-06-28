@@ -13,7 +13,7 @@ type Resource = {
   title: string;
   subject: string;
   branch: string;
-  semester: number;
+  semester: string;
   faculty: string;
   votes: number;
   isVoted: boolean;
