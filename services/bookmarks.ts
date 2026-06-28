@@ -18,9 +18,18 @@ export async function getBookmarkedResources(userId: string) {
     }).populate(
         "uploadedBy",
         "name"
-    );
+    ).lean();
 
     return {
-        bookmarks
+        bookmarks: bookmarks.map((bookmark) => ({
+            ...bookmark,
+            _id: bookmark._id.toString(),
+            uploadedBy: bookmark.uploadedBy
+                ? {
+                    ...bookmark.uploadedBy,
+                    _id: bookmark.uploadedBy._id.toString(),
+                }
+                : bookmark.uploadedBy,
+        })),
     }
 }
