@@ -4,6 +4,7 @@ import { Resource } from "@/models/Resource";
 import { User } from "@/models/User";
 import { NextResponse } from "next/server";
 
+//replaced by service getBookmarkedResources
 export async function GET() {
     try {
         await connectDB();

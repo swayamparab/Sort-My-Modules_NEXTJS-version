@@ -1,59 +1,17 @@
-"use client";
-
-import { useEffect, useState } from "react";
-
-import api from "@/lib/axios";
-
 import ResourceCard from "@/components/ResourceCard";
+import { getUserFromToken } from "@/lib/getUserFromToken";
+import { redirect } from "next/navigation";
+import { getBookmarkedResources } from "@/services/bookmarks";
 
-type Resource = {
-    _id: string;
-    title: string;
-    subject: string;
-    branch: string;
-    semester: number;
-    faculty: string;
-    votes: number;
-    isVoted: boolean;
-    isBookmarked: boolean;
-};
+export default async function BookmarksPage() {
 
-export default function BookmarksPage() {
+    const userId = await getUserFromToken();
 
-    const [bookmarks, setBookmarks] =
-        useState<Resource[]>([]);
+    if(!userId){
+        redirect("/login")
+    }
 
-    const [loading, setLoading] =
-        useState(true);
-
-    useEffect(() => {
-
-        const getBookmarks = async () => {
-
-            try {
-
-                const res = await api.get(
-                    "/resources/bookmarks"
-                );
-
-                setBookmarks(
-                    res.data.bookmarks
-                );
-
-            } catch (err) {
-
-                console.log(err);
-
-            } finally {
-
-                setLoading(false);
-
-            }
-        };
-
-        getBookmarks();
-
-    }, []);
+    const {bookmarks} = await getBookmarkedResources(userId);
 
     return (
         <>
@@ -66,18 +24,13 @@ export default function BookmarksPage() {
                 My Bookmarks
             </h2>
 
-            {loading && (
-                <p>Loading...</p>
-            )}
-
-            {!loading &&
-                bookmarks.length === 0 && (
+            {bookmarks.length === 0 && (
                     <p>
                         You haven't bookmarked anything yet.
                     </p>
                 )}
 
-            {bookmarks.map((resource, index) => (
+            {bookmarks.map((resource) => (
 
                 <ResourceCard
                     key={resource._id}
