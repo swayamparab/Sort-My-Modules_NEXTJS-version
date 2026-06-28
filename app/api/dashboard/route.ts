@@ -5,6 +5,7 @@ import { User } from "@/models/User";
 import { NextResponse } from "next/server";
 
 //fetch user dashboard
+//replaced by service getDashboardData
 export async function GET() {
     try {
         await connectDB();
