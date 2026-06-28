@@ -6,6 +6,7 @@ import { Vote } from "@/models/Vote";
 import { NextResponse } from "next/server";
 
 //latest uploaded resources related to user
+//replaced with getLatestResources service
 export async function GET() {
     try {
         await connectDB();

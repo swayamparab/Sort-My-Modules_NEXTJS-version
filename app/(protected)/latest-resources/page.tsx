@@ -1,68 +1,17 @@
-"use client";
-
-import { useEffect, useState } from "react";
-
-import api from "@/lib/axios";
-
 import ResourceCard from "@/components/ResourceCard";
+import { getUserFromToken } from "@/lib/getUserFromToken";
+import { redirect } from "next/navigation";
+import { getLatestResources } from "@/services/latest";
 
-type Resource = {
-    _id: string;
-    title: string;
-    subject: string;
-    branch: string;
-    semester: string;
-    faculty: string;
-    votes: number;
-    isVoted: boolean;
-    isBookmarked: boolean;
-};
+export default async function RecentResourcesPage() {
 
-export default function RecentResourcesPage() {
+    const userId = await getUserFromToken();
 
-    const [resources, setResources] =
-        useState<Resource[]>([]);
-
-    const [loading, setLoading] =
-        useState(true);
-
-    const fetchResources = async () => {
-
-        try {
-
-            const res = await api.get(
-                "/resources/recent"
-            );
-
-            setResources(
-                res.data.resources
-            );
-
-        } catch (err) {
-
-            console.error(err);
-
-        } finally {
-
-            setLoading(false);
-
-        }
-    };
-
-    useEffect(() => {
-
-        fetchResources();
-
-    }, []);
-
-    if (loading) {
-
-        return (
-            <p>
-                Loading resources...
-            </p>
-        );
+    if(!userId){
+        redirect("/login");
     }
+
+    const resources = await getLatestResources(userId);
 
     return (
         <>
