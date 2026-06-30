@@ -1,36 +1,146 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sort My Modules
 
-## Getting Started
+A personalized academic resource sharing platform built for college students. Users can upload, discover, bookmark, and download study materials tailored to their branch and semester.
 
-First, run the development server:
+## Features
+
+### Authentication
+
+* Secure JWT Authentication
+* HttpOnly Cookies
+* Protected Routes
+
+### Resources
+
+* Upload PDF Notes
+* View Resources
+* Download Resources
+* Personalized Resource Feed
+* Latest Resources
+* Top Voted Resources
+* Subject-wise Resources
+* Search Resources
+
+### User Features
+
+* Bookmark Resources
+* Upvote Resources
+* Dashboard with Statistics
+* View Personal Uploads
+* View Saved Bookmarks
+
+### PDF Viewer
+
+* In-browser PDF Viewing
+* Zoom In / Zoom Out
+* Page Navigation
+* Current Page Indicator
+* Download Support
+
+## Tech Stack
+
+### Frontend
+
+* Next.js (App Router)
+* React
+* TypeScript
+* CSS
+
+### Backend
+
+* Next.js Route Handlers
+* MongoDB
+* Mongoose
+* JWT Authentication
+
+### Storage
+
+* ImageKit
+
+### Libraries
+
+* React PDF
+* Axios
+* React Hot Toast
+* Next Top Loader
+
+## Project Structure
+
+```
+app/
+components/
+context/
+lib/
+models/
+services/
+public/
+```
+
+## Architecture
+
+The project follows the App Router architecture.
+
+* Server Components for fetching data
+* Client Components for interactive UI
+* Service Layer for direct database access
+* API Routes for mutations (POST, PATCH, DELETE)
+
+```
+Server Component
+        ↓
+Service
+        ↓
+MongoDB
+
+Client Component
+        ↓
+API Route
+        ↓
+Service
+        ↓
+MongoDB
+```
+
+## Installation
+
+Clone the repository
+
+```bash
+git clone <repository-url>
+```
+
+Install dependencies
+
+```bash
+npm install
+```
+
+Create a `.env.local` file and add the required environment variables.
+
+Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Future Improvements
 
-## Learn More
+* Admin Panel
+* Resource Comments
+* Resource Reporting
+* Notifications
+* Pagination
+* Advanced Filtering
+* Recommendation System
+* Redis Caching
+* Cloud Deployment
 
-To learn more about Next.js, take a look at the following resources:
+## License
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is intended for educational purposes.
