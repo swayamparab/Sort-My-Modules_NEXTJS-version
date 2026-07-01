@@ -48,7 +48,7 @@ export default function HomePage() {
         {/* Fixed Button Layout and Typo'd Paddings */}
         <div className="mt-10 flex flex-row items-center justify-center gap-4">
           <Link
-            href="/register"
+            href="/signup"
             className="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-500 hover:scale-[1.02] active:scale-[0.98]"
           >
             Get Started
