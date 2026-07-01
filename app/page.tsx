@@ -1,26 +1,12 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
+import {redirect} from "next/navigation"
+import { getUserFromToken } from "@/lib/getUserFromToken";
 
-export default function HomePage() {
-  const { user, loading } = useAuth();
-  const router = useRouter();
+export default async function HomePage() {
+  const userId = await getUserFromToken();
 
-  useEffect(() => {
-    if (!loading && user) {
-      router.replace("/home");
-    }
-  }, [loading, user, router]);
-
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center text-lg font-medium bg-[#0f172a] text-white">
-        Loading...
-      </div>
-    );
+  if (userId) {
+    redirect("/home");
   }
 
   return (
