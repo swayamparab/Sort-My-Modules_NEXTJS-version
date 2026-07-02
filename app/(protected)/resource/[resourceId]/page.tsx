@@ -530,7 +530,7 @@ export default function ResourceViewerPage() {
             >
 
                 <input
-                    className="border border-dashed rounded-[10px] w-[125px]"
+                    className="border border-dashed rounded-[10px] w-31.25"
                     type="number"
                     placeholder="Enter page no."
                     value={pageInput}
@@ -539,9 +539,6 @@ export default function ResourceViewerPage() {
                             e.target.value
                         )
                     }
-                    style={{
-                        width: "70px"
-                    }}
                 />
 
                 <button
