@@ -4,24 +4,49 @@ import { Resource } from "@/models/Resource";
 import { User } from "@/models/User";
 import { Vote } from "@/models/Vote";
 
-export async function getLatestResources(userId: string) {
+type LatestResource = {
+    _id: string;
+    title: string;
+    subject: string;
+    subjectKey: string;
+    description: string;
+    faculty: string;
+    semester: string;
+    branch: string;
+    pdfUrl: string;
+    fileId: string;
+    uploadedBy: {
+        _id: string;
+        name: string;
+    } | null;
+    views: number;
+    votes: number;
+    createdAt: Date;
+    updatedAt: Date;
+    isVoted: boolean;
+    isBookmarked: boolean;
+};
+
+export async function getLatestResources(
+    userId: string
+): Promise<LatestResource[]> {
 
     await connectDB();
 
-    const cacheKey = `latest:${userId}`
-    const cachedLatest = await redis.get(cacheKey);
+    const cacheKey = `latest:${userId}`;
+
+    const cachedLatest =
+        await redis.get<LatestResource[]>(cacheKey);
 
     if (cachedLatest) {
-        return cachedLatest
+        return cachedLatest;
     }
 
     const user = await User.findById(userId)
-        .select(
-            "branch semester bookmarks"
-        );
+        .select("branch semester bookmarks");
 
     if (!user) {
-        throw new Error("User not found")
+        throw new Error("User not found");
     }
 
     /* RECENT RESOURCES */
@@ -29,13 +54,11 @@ export async function getLatestResources(userId: string) {
         branch: user.branch,
         semester: user.semester,
     })
-        .populate(
-            "uploadedBy",
-            "name"
-        )
+        .populate("uploadedBy", "name")
         .sort({
             createdAt: -1,
-        }).lean();
+        })
+        .lean();
 
     /* USER VOTES */
     const userVotes = await Vote.find({
@@ -56,28 +79,33 @@ export async function getLatestResources(userId: string) {
     );
 
     /* ATTACH FLAGS */
-    const resourcesWithMeta = resources.map((resource) => ({
-        ...resource,
-        _id: resource._id.toString(),
-        uploadedBy:
-            resource.uploadedBy &&
+    const resourcesWithMeta: LatestResource[] =
+        resources.map((resource) => ({
+            ...resource,
+            _id: resource._id.toString(),
+            uploadedBy:
+                resource.uploadedBy &&
                 typeof resource.uploadedBy === "object" &&
                 "_id" in resource.uploadedBy
-                ? {
-                    ...resource.uploadedBy,
-                    _id: resource.uploadedBy._id.toString(),
-                }
-                : resource.uploadedBy,
+                    ? {
+                          ...resource.uploadedBy,
+                          _id: resource.uploadedBy._id.toString(),
+                      }
+                    : resource.uploadedBy,
 
-        isVoted: votedResourceIds.has(resource._id.toString()),
-        isBookmarked: bookmarkedResourceIds.has(
-            resource._id.toString()
-        ),
-    }));
+            isVoted: votedResourceIds.has(
+                resource._id.toString()
+            ),
 
-    await redis.set(cacheKey, resourcesWithMeta, { ex: 300 });
+            isBookmarked:
+                bookmarkedResourceIds.has(
+                    resource._id.toString()
+                ),
+        }));
 
-    return (
-        resourcesWithMeta
-    );
+    await redis.set(cacheKey, resourcesWithMeta, {
+        ex: 300,
+    });
+
+    return resourcesWithMeta;
 }

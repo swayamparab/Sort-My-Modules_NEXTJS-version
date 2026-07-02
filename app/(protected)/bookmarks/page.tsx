@@ -36,7 +36,8 @@ export default async function BookmarksPage() {
                     key={resource._id}
                     resource={{
                         ...resource,
-                        isBookmarked: true
+                        isBookmarked: true,
+                        isVoted: false
                     }}
                 />
 

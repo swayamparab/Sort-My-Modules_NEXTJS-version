@@ -33,43 +33,46 @@ type SubjectGroup = {
     topResources: HomeResource[];
 };
 
-export async function getHomePage(userId: string) {
+export async function getHomePage(
+    userId: string
+): Promise<SubjectGroup[]> {
     await connectDB();
 
-    const user = await User.findById(userId)
-        .select(
-            "branch semester bookmarks"
+    const cacheKey = `home:${userId}`;
+
+    const cachedHome =
+        await redis.get<SubjectGroup[]>(cacheKey);
+
+    if (cachedHome) {
+        console.log(
+            `🟢 [Redis] HOME Cache HIT | User: ${userId}`
         );
+
+        return cachedHome;
+    }
+
+    console.log(
+        `🔴 [Redis] HOME Cache MISS | User: ${userId}`
+    );
+
+    const user = await User.findById(userId)
+        .select("branch semester bookmarks");
 
     if (!user) {
         throw new Error("User not found");
     }
 
-    const cacheKey = `home:${userId}`;
-
-    const cachedHome = await redis.get(cacheKey);
-
-    if (cachedHome) {
-        return cachedHome as SubjectGroup[]
-    }
-
-    console.log("Redis cache MISS");
-
     /* BOOKMARK IDS */
-    const bookmarkedIds =
-        new Set(
-            user.bookmarks.map(
-                (id: any) =>
-                    id.toString()
-            )
-        );
+    const bookmarkedIds = new Set(
+        user.bookmarks.map((id: any) =>
+            id.toString()
+        )
+    );
 
     /* USER VOTES */
-
-    const userVotes =
-        await Vote.find({
-            user: userId,
-        });
+    const userVotes = await Vote.find({
+        user: userId,
+    });
 
     const votedIds = new Set(
         userVotes.map((v) =>
@@ -81,25 +84,23 @@ export async function getHomePage(userId: string) {
     const resources = await Resource.find({
         branch: user.branch,
         semester: user.semester,
-    }).populate(
-        "uploadedBy",
-        "name"
-    ).lean();
+    })
+        .populate("uploadedBy", "name")
+        .lean();
 
     /* GROUP RESOURCES */
-    const grouped: Record<string, SubjectGroup> = {};
+    const grouped: Record<
+        string,
+        SubjectGroup
+    > = {};
 
-    for (let resource of resources) {
-        const key =
-            resource.subjectKey;
+    for (const resource of resources) {
+        const key = resource.subjectKey;
 
         if (!grouped[key]) {
             grouped[key] = {
-                subject:
-                    resource.subject,
-
+                subject: resource.subject,
                 count: 0,
-
                 topResources: [],
             };
         }
@@ -111,51 +112,49 @@ export async function getHomePage(userId: string) {
             _id: resource._id.toString(),
             uploadedBy:
                 resource.uploadedBy &&
-                    typeof resource.uploadedBy === "object" &&
-                    "_id" in resource.uploadedBy
+                typeof resource.uploadedBy === "object" &&
+                "_id" in resource.uploadedBy
                     ? {
-                        ...resource.uploadedBy,
-                        _id: resource.uploadedBy._id.toString(),
-                    }
+                          ...resource.uploadedBy,
+                          _id: resource.uploadedBy._id.toString(),
+                      }
                     : resource.uploadedBy,
 
-            isVoted: votedIds.has(resource._id.toString()),
-            isBookmarked: bookmarkedIds.has(resource._id.toString()),
+            isVoted: votedIds.has(
+                resource._id.toString()
+            ),
+
+            isBookmarked: bookmarkedIds.has(
+                resource._id.toString()
+            ),
         });
     }
 
     /* SORT INSIDE SECTIONS */
-
-    for (let key in grouped) {
-        grouped[
-            key
-        ].topResources.sort(
-            (a: any, b: any) =>
-                new Date(
-                    b.createdAt
-                ).getTime() -
-                new Date(
-                    a.createdAt
-                ).getTime()
+    for (const key in grouped) {
+        grouped[key].topResources.sort(
+            (a, b) =>
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
         );
 
-        /* KEEP ONLY LATEST 3 */
-
         grouped[key].topResources =
-            grouped[
-                key
-            ].topResources.slice(0, 3);
+            grouped[key].topResources.slice(0, 3);
     }
 
     /* SORT SECTIONS */
-
-    const result =
+    const result: SubjectGroup[] =
         Object.values(grouped).sort(
-            (a: any, b: any) =>
-                b.count - a.count
+            (a, b) => b.count - a.count
         );
 
-    await redis.set(cacheKey, result, {ex: 300});
+    await redis.set(cacheKey, result, {
+        ex: 300,
+    });
 
-    return (result);
+    console.log(
+        `🔵 [Redis] HOME Cache SET | User: ${userId}`
+    );
+
+    return result;
 }
