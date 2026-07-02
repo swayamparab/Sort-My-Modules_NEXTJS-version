@@ -1,4 +1,5 @@
 import { connectDB } from "@/lib/db";
+import { redis } from "@/lib/redis";
 import { Resource } from "@/models/Resource";
 import { User } from "@/models/User";
 import { Vote } from "@/models/Vote";
@@ -6,6 +7,13 @@ import { Vote } from "@/models/Vote";
 export async function getLatestResources(userId: string) {
 
     await connectDB();
+
+    const cacheKey = `latest:${userId}`
+    const cachedLatest = await redis.get(cacheKey);
+
+    if (cachedLatest) {
+        return cachedLatest
+    }
 
     const user = await User.findById(userId)
         .select(
@@ -66,6 +74,8 @@ export async function getLatestResources(userId: string) {
             resource._id.toString()
         ),
     }));
+
+    await redis.set(cacheKey, resourcesWithMeta, { ex: 300 });
 
     return (
         resourcesWithMeta

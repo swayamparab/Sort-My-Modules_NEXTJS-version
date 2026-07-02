@@ -64,6 +64,7 @@ export async function PATCH(request: Request, { params, }: { params: Promise<{ r
 
         await Promise.all([
             redis.del(`home:${userId}`),
+            redis.del(`latest:${userId}`),
             redis.del(`bookmarks:${userId}`),
         ]);
 

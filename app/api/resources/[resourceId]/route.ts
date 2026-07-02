@@ -81,15 +81,16 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ r
         /* DELETE RESOURCE */
         await resource.deleteOne();
 
-        /* INVALIDATE HOME CACHE OF OWNER */
-        await redis.del(`home:${userId}`);
+        /* INVALIDATE HOME , LATEST AND BOOKMARK CACHES */
+        await Promise.all([
+            redis.del(`home:${userId}`),
+            redis.del(`latest:${userId}`),
 
-        /* INVALIDATE BOOKMARK CACHE OF ALL USERS */
-        await Promise.all(
-            usersWithBookmark.map((user) =>
+            ...usersWithBookmark.map((user) =>
                 redis.del(`bookmarks:${user._id}`)
-            )
-        );
+            ),
+        ]);
+
 
         const response = NextResponse.json(
             {

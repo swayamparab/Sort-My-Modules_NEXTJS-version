@@ -3,7 +3,7 @@ import { getUserFromToken } from "@/lib/getUserFromToken";
 import { imagekit } from "@/lib/imagekit";
 import { Resource } from "@/models/Resource";
 import { NextResponse } from "next/server";
-import {redis} from "@/lib/redis"
+import { redis } from "@/lib/redis"
 
 //upload new resource
 export async function POST(request: Request) {
@@ -132,8 +132,10 @@ export async function POST(request: Request) {
             uploadedBy: userId,
         });
 
-        await redis.del(`home:${userId}`)
-        console.log("cache deleted")
+        await Promise.all([
+            redis.del(`home:${userId}`),
+            redis.del(`latest:${userId}`),
+        ]);
 
         const response = NextResponse.json(
             {

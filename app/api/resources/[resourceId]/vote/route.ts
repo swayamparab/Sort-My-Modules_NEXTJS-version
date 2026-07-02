@@ -60,8 +60,10 @@ export async function PATCH(request: Request, { params, }: { params: Promise<{ r
             resourceId
         ).select("votes");
 
-        await redis.del(`home:${userId}`);
-        console.log("cache deleted")
+        await Promise.all([
+            redis.del(`home:${userId}`),
+            redis.del(`latest:${userId}`),
+        ]);
 
         return NextResponse.json(
             {
