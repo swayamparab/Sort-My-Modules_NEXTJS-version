@@ -2,7 +2,7 @@ import { connectDB } from "@/lib/db";
 import { User } from "@/models/User";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
-import { signupRateLimit } from "@/lib/ratelimiting";
+import { signupRateLimit } from "@/lib/redis";
 
 //signup new user
 export async function POST(request: Request) {

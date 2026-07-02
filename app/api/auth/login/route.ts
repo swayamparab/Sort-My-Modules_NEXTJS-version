@@ -3,7 +3,7 @@ import { User } from "@/models/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
-import { loginRateLimit } from "@/lib/ratelimiting";
+import { loginRateLimit } from "@/lib/redis";
 
 //login user
 export async function POST(request: Request) {

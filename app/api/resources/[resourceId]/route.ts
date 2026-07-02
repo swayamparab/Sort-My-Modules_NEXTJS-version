@@ -1,6 +1,7 @@
 import { connectDB } from "@/lib/db";
 import { getUserFromToken } from "@/lib/getUserFromToken";
 import { imagekit } from "@/lib/imagekit";
+import { redis } from "@/lib/redis";
 import { Resource } from "@/models/Resource";
 import { User } from "@/models/User";
 import { Vote } from "@/models/Vote";
@@ -71,6 +72,9 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ r
 
         /* DELETE RESOURCE */
         await resource.deleteOne();
+
+        await redis.del(`home:${userId}`);
+        console.log("cache deleted")
 
         const response = NextResponse.json(
             {

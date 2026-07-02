@@ -1,5 +1,6 @@
 import { connectDB } from "@/lib/db";
 import { getUserFromToken } from "@/lib/getUserFromToken";
+import { redis } from "@/lib/redis";
 import { Resource } from "@/models/Resource";
 import { Vote } from "@/models/Vote";
 import { NextResponse } from "next/server";
@@ -58,6 +59,9 @@ export async function PATCH(request: Request, { params, }: { params: Promise<{ r
         const updatedResource = await Resource.findById(
             resourceId
         ).select("votes");
+
+        await redis.del(`home:${userId}`);
+        console.log("cache deleted")
 
         return NextResponse.json(
             {

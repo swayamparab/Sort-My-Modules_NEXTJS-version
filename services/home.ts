@@ -1,4 +1,5 @@
 import { connectDB } from "@/lib/db";
+import { redis } from "@/lib/redis";
 import { Resource } from "@/models/Resource";
 import { User } from "@/models/User";
 import { Vote } from "@/models/Vote";
@@ -43,6 +44,17 @@ export async function getHomePage(userId: string) {
     if (!user) {
         throw new Error("User not found");
     }
+
+    const cacheKey = `home:${userId}`;
+
+    const cachedHome = await redis.get(cacheKey);
+
+    if (cachedHome) {
+        console.log("Redis cache HIT")
+        return cachedHome as SubjectGroup[]
+    }
+
+    console.log("Redis cache MISS");
 
     /* BOOKMARK IDS */
     const bookmarkedIds =
@@ -144,7 +156,7 @@ export async function getHomePage(userId: string) {
                 b.count - a.count
         );
 
-    return (
-        result
-    );
+    await redis.set(cacheKey, result, {ex: 300});
+
+    return (result);
 }
