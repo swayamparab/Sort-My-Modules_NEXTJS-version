@@ -97,10 +97,7 @@ export default function ResourceViewerPage() {
 
     };
 
-    /* ===============================
-       FETCH RESOURCE
-    ================================= */
-
+    // fetch resource
     useEffect(() => {
 
         const fetchResource =
@@ -150,10 +147,7 @@ export default function ResourceViewerPage() {
 
     }, [resourceId]);
 
-    /* ===============================
-       RESPONSIVE PDF WIDTH
-    ================================= */
-
+    // responsive pdf width
     useEffect(() => {
 
         const updateWidth = () => {
@@ -182,10 +176,7 @@ export default function ResourceViewerPage() {
 
     }, []);
 
-    /* ===============================
-       VOTE
-    ================================= */
-
+    //vote
     const handleVote = async () => {
 
         try {
@@ -212,10 +203,8 @@ export default function ResourceViewerPage() {
         }
     };
 
-    /* ===============================
-       BOOKMARK
-    ================================= */
 
+    // bookmark
     const handleBookmark =
         async () => {
 
@@ -239,10 +228,7 @@ export default function ResourceViewerPage() {
             }
         };
 
-    /* ===============================
-       DOWNLOAD
-    ================================= */
-
+    // download
     const handleDownload =
         async () => {
 
@@ -315,10 +301,7 @@ export default function ResourceViewerPage() {
             }
         };
 
-    /* ===============================
-       ZOOM
-    ================================= */
-
+    //zoom
     const zoomIn = () => {
 
         setScale((prev) =>
@@ -341,9 +324,7 @@ export default function ResourceViewerPage() {
 
     };
 
-    /* ===============================
-       PAGE DETECTION
-    ================================= */
+    // page detection
 
     const handleScroll = () => {
 
@@ -393,10 +374,7 @@ export default function ResourceViewerPage() {
         }
     };
 
-    /* ===============================
-       LOADING
-    ================================= */
-
+    
     if (loading) {
 
         return (
