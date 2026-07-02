@@ -1,10 +1,45 @@
 import { connectDB } from "@/lib/db";
+import { redis } from "@/lib/redis";
 import { Resource } from "@/models/Resource";
 import { User } from "@/models/User";
 import { Vote } from "@/models/Vote";
 
-export async function getTopResources(userId: string) {
+type TopResource = {
+    _id: string;
+    title: string;
+    subject: string;
+    subjectKey: string;
+    description: string;
+    faculty: string;
+    semester: string;
+    branch: string;
+    pdfUrl: string;
+    fileId: string;
+    uploadedBy: {
+        _id: string;
+        name: string;
+    } | null;
+    views: number;
+    votes: number;
+    createdAt: Date;
+    updatedAt: Date;
+    isVoted: boolean;
+    isBookmarked: boolean;
+};
+
+export async function getTopResources(
+    userId: string
+): Promise<TopResource[]> {
     await connectDB();
+
+    const cacheKey = `top:${userId}`;
+
+    const cachedTop =
+        await redis.get<TopResource[]>(cacheKey);
+
+    if (cachedTop) {
+        return cachedTop;
+    }
 
     const user = await User.findById(userId).select(
         "branch semester bookmarks"
@@ -30,29 +65,46 @@ export async function getTopResources(userId: string) {
     });
 
     const votedResourceIds = new Set(
-        userVotes.map((vote) => vote.resource.toString())
+        userVotes.map((vote) =>
+            vote.resource.toString()
+        )
     );
 
     const bookmarkedResourceIds = new Set(
-        user.bookmarks.map((id: any) => id.toString())
+        user.bookmarks.map((id: any) =>
+            id.toString()
+        )
     );
 
-    return resources.map((resource) => ({
-        ...resource,
-        _id: resource._id.toString(),
-        uploadedBy:
-            resource.uploadedBy &&
-                typeof resource.uploadedBy === "object" &&
-                "_id" in resource.uploadedBy
-                ? {
-                    ...resource.uploadedBy,
-                    _id: resource.uploadedBy._id.toString(),
-                }
-                : resource.uploadedBy,
+    const result: TopResource[] = resources.map(
+        (resource) => ({
+            ...resource,
+            _id: resource._id.toString(),
 
-        isVoted: votedResourceIds.has(resource._id.toString()),
-        isBookmarked: bookmarkedResourceIds.has(
-            resource._id.toString()
-        ),
-    }));
+            uploadedBy:
+                resource.uploadedBy &&
+                    typeof resource.uploadedBy === "object" &&
+                    "_id" in resource.uploadedBy
+                    ? {
+                        ...resource.uploadedBy,
+                        _id: resource.uploadedBy._id.toString(),
+                    }
+                    : resource.uploadedBy,
+
+            isVoted: votedResourceIds.has(
+                resource._id.toString()
+            ),
+
+            isBookmarked:
+                bookmarkedResourceIds.has(
+                    resource._id.toString()
+                ),
+        })
+    );
+
+    await redis.set(cacheKey, result, {
+        ex: 300,
+    });
+
+    return result;
 }

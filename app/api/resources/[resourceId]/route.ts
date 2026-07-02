@@ -85,6 +85,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ r
         await Promise.all([
             redis.del(`home:${userId}`),
             redis.del(`latest:${userId}`),
+            redis.del(`top:${userId}`),
 
             ...usersWithBookmark.map((user) =>
                 redis.del(`bookmarks:${user._id}`)

@@ -66,6 +66,7 @@ export async function PATCH(request: Request, { params, }: { params: Promise<{ r
             redis.del(`home:${userId}`),
             redis.del(`latest:${userId}`),
             redis.del(`bookmarks:${userId}`),
+            redis.del(`top:${userId}`)
         ]);
 
         return NextResponse.json(

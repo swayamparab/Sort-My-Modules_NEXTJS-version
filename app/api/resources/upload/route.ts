@@ -135,6 +135,7 @@ export async function POST(request: Request) {
         await Promise.all([
             redis.del(`home:${userId}`),
             redis.del(`latest:${userId}`),
+            redis.del(`top:${userId}`)
         ]);
 
         const response = NextResponse.json(
