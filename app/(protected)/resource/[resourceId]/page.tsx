@@ -530,6 +530,7 @@ export default function ResourceViewerPage() {
             >
 
                 <input
+                    className="border border-dashed rounded-[10px]"
                     type="number"
                     placeholder="Page"
                     value={pageInput}
