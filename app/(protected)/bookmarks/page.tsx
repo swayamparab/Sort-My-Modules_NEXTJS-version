@@ -39,6 +39,7 @@ export default async function BookmarksPage() {
                         isBookmarked: true,
                         isVoted: false
                     }}
+                    showVote={false}
                 />
 
             ))}

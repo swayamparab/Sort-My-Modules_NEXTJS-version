@@ -22,10 +22,12 @@ type Resource = {
 
 type ResourceCardProps = {
   resource: Resource;
+  showVote?: boolean;
 };
 
 export default function ResourceCard({
   resource,
+  showVote = true,
 }: ResourceCardProps) {
 
   const router = useRouter();
@@ -157,17 +159,19 @@ export default function ResourceCard({
 
         <div className="card-stats">
 
-          <span
-            onClick={handleVote}
-            style={{
-              cursor: "pointer",
-              border: ".5px solid gray",
-              borderRadius: "3px",
-              padding: "5px",
-            }}
-          >
-            {isVoted ? "👍" : "👍🏻"} {votes}
-          </span>
+          {showVote && (
+            <span
+              onClick={handleVote}
+              style={{
+                cursor: "pointer",
+                border: ".5px solid gray",
+                borderRadius: "3px",
+                padding: "5px",
+              }}
+            >
+              {isVoted ? "👍" : "👍🏻"} {votes}
+            </span>
+          )}
 
           <span
             onClick={handleBookmark}
