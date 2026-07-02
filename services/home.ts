@@ -50,7 +50,6 @@ export async function getHomePage(userId: string) {
     const cachedHome = await redis.get(cacheKey);
 
     if (cachedHome) {
-        console.log("Redis cache HIT")
         return cachedHome as SubjectGroup[]
     }
 

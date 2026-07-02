@@ -53,6 +53,14 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ r
             );
         }
 
+        /* USERS WHO BOOKMARKED THIS RESOURCE */
+        const usersWithBookmark = await User.find(
+            {
+                bookmarks: resourceId,
+            },
+            "_id"
+        );
+
         /* REMOVE BOOKMARKS */
         await User.updateMany(
             {
@@ -73,8 +81,15 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ r
         /* DELETE RESOURCE */
         await resource.deleteOne();
 
+        /* INVALIDATE HOME CACHE OF OWNER */
         await redis.del(`home:${userId}`);
-        console.log("cache deleted")
+
+        /* INVALIDATE BOOKMARK CACHE OF ALL USERS */
+        await Promise.all(
+            usersWithBookmark.map((user) =>
+                redis.del(`bookmarks:${user._id}`)
+            )
+        );
 
         const response = NextResponse.json(
             {

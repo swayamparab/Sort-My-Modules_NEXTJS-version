@@ -1,4 +1,5 @@
 import { connectDB } from "@/lib/db";
+import { redis } from "@/lib/redis";
 import { Resource } from "@/models/Resource";
 import { User } from "@/models/User";
 
@@ -11,6 +12,13 @@ export async function getBookmarkedResources(userId: string) {
         throw new Error("User not found")
     }
 
+    const cacheKey = `bookmarks:${userId}`;
+    const cachedBookmarks = await redis.get(cacheKey);
+
+    if(cachedBookmarks){
+        return cachedBookmarks;
+    }
+
     const bookmarks = await Resource.find({
         _id: {
             $in: user.bookmarks,
@@ -20,7 +28,7 @@ export async function getBookmarkedResources(userId: string) {
         "name"
     ).lean();
 
-    return {
+    const result = {
         bookmarks: bookmarks.map((bookmark) => ({
             ...bookmark,
             _id: bookmark._id.toString(),
@@ -32,4 +40,8 @@ export async function getBookmarkedResources(userId: string) {
                 : bookmark.uploadedBy,
         })),
     }
+
+    await redis.set(cacheKey, result, {ex: 300});
+
+    return result;
 }
