@@ -1,5 +1,6 @@
 import { connectDB } from "@/lib/db";
 import { getUserFromToken } from "@/lib/getUserFromToken";
+import { redis } from "@/lib/redis";
 import { User } from "@/models/User";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -20,29 +21,42 @@ export async function PATCH(request: Request) {
         }
 
         const body = await request.json();
-        const {semester, branch} = body;
+        const { semester, branch } = body;
 
-        if(!semester || !branch){
+        if (!semester || !branch) {
             return NextResponse.json({
                 message: "Semester and Branch are required"
-            }, {status: 400})
+            }, { status: 400 })
         }
 
         const user = await User.findByIdAndUpdate(userId,
-            {semester, branch},
-            {new: true}
+            { semester, branch },
+            { new: true }
         ).select("name email semester branch")
+
+        if (!user) {
+            return NextResponse.json(
+                { message: "User not found" },
+                { status: 404 }
+            );
+        }
+
+        await Promise.all([
+            redis.del(`home:${userId}`),
+            redis.del(`latest:${userId}`),
+            redis.del(`top:${userId}`)
+        ]);
 
         const response = NextResponse.json({
             message: "user updated successfully",
             user
-        }, {status: 200})
+        }, { status: 200 })
 
         return response;
     }
-    catch(err: any){
+    catch (err: any) {
         return NextResponse.json({
             message: err.message
-        }, {status: 500})
+        }, { status: 500 })
     }
 }
