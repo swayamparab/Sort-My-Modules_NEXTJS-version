@@ -38,6 +38,7 @@ export default async function HomePage() {
             style={{
               padding: "10px 5px",
               margin: "20px",
+              marginRight: 0,
               display: "inline-flex",
               alignItems: "center",
               justifyContent: "center",
@@ -52,6 +53,7 @@ export default async function HomePage() {
             style={{
               padding: "10px 5px",
               margin: "20px",
+              marginLeft: 0,
               display: "inline-flex",
               alignItems: "center",
               justifyContent: "center",
