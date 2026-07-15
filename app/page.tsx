@@ -1,5 +1,5 @@
 import Link from "next/link";
-import {redirect} from "next/navigation"
+import { redirect } from "next/navigation"
 import { getUserFromToken } from "@/lib/getUserFromToken";
 
 export default async function HomePage() {
@@ -10,7 +10,7 @@ export default async function HomePage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0f172a] text-white flex flex-col justify-center py-12">
+    <main className="min-h-screen bg-[#0f172a] text-white flex flex-col justify-center pt-4 pb-12">
       {/* Hero Section */}
       <section className="mx-auto flex max-w-7xl flex-col items-center px-6 text-center">
         {/* Fixed Badge Padding */}
@@ -31,20 +31,34 @@ export default async function HomePage() {
           and semester.
         </p>
 
-        {/* Fixed Button Layout and Typo'd Paddings */}
         <div className="mt-10 flex flex-row items-center justify-center gap-4">
           <Link
-            href="/signup"
-            className="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-500 hover:scale-[1.02] active:scale-[0.98]"
-          >
-            Get Started
-          </Link>
-
-          <Link
             href="/login"
-            className="rounded-xl border border-slate-700 bg-slate-800/50 px-6 py-3 font-semibold text-slate-200 transition hover:bg-slate-800 hover:border-slate-600 hover:scale-[1.02] active:scale-[0.98]"
+            className="rounded-xl border border-slate-700 bg-slate-800/50 font-semibold text-slate-200 transition hover:bg-slate-800 hover:border-slate-600 hover:scale-[1.02] active:scale-[0.98]"
+            style={{
+              padding: "10px 5px",
+              margin: "20px",
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              minWidth: "170px",
+            }}
           >
             Login
+          </Link>
+          <Link
+            href="/signup"
+            className="rounded-xl bg-blue-600 font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-500 hover:scale-[1.02] active:scale-[0.98]"
+            style={{
+              padding: "10px 5px",
+              margin: "20px",
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              minWidth: "170px",
+            }}
+          >
+            Sign up
           </Link>
         </div>
       </section>
@@ -71,6 +85,37 @@ export default async function HomePage() {
           />
         </div>
       </section>
+      <footer className="mt-24 border-t border-slate-800/80">
+        <div
+          className="mx-auto flex max-w-7xl flex-col items-center text-center text-sm text-slate-400"
+          style={{ padding: "32px 0" }}
+        >
+          <p>
+            Built by{" "}
+            <span className="font-semibold text-white">
+              Swayam Parab
+            </span>
+          </p>
+
+          <p className="mt-2 text-xs text-slate-500">
+            SortMyModules • Academic Resource Sharing Platform
+          </p>
+
+          <a
+            href="https://github.com/swayamparab"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-5 rounded-lg border border-slate-700 bg-slate-800/50 font-medium text-blue-400 transition hover:border-slate-600 hover:bg-slate-800 hover:text-blue-300"
+            style={{
+              padding: "10px 18px",
+              display: "inline-flex",
+              alignItems: "center",
+            }}
+          >
+            View on GitHub →
+          </a>
+        </div>
+      </footer>
     </main>
   );
 }
